@@ -1,0 +1,41 @@
+private FileItemFactory fileItemFactory;
+
+
+public void upload(){
+  BufferedWriter bw = null;
+  try {
+        //  注意FileItem类 
+  			FileItem fileItem = this.getTmpFileItem();
+  			OutputStream out = fileItem.getOutputStream();//注意将输出内容直接写入到了OutputStream流中
+			  bw = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+			  int rowCount = 0;
+			  List<String> values;
+			  while((values = listReader.read()) != null ){//一行行的读入
+			     XXXX
+			     XXXX
+			     bw.write(json);
+           bw.newLine();
+			  }
+			  bw.flush();
+			  this.copyTmpFileToDFS(fileItem.getInputStream());//将out流中的数据存在一个地方
+  }
+}
+
+
+private FileItem getTmpFileItem() {
+		return this.fileItemFactory.createItem(null, null, false, this.tmpFileName);
+}
+
+
+上述的FileItem是如何规定写入文件临时地点的呢？有一个很巧妙的写法：
+
+ <bean id="fileItemFactory" class="org.apache.commons.fileupload.disk.DiskFileItemFactory" >
+    	<property name="repository">
+    		<bean class="java.io.File">
+    			<constructor-arg value="${tmp.storage.path}" />
+    		</bean>
+    	</property>
+    	<property name="fileCleaningTracker">
+    		<bean class="org.apache.commons.io.FileCleaningTracker" />
+    	</property>
+    </bean>
